@@ -32,6 +32,45 @@ class DecoderTests: XCTestCase {
         XCTAssertNoThrow(try decoder.decode(Item.self, from: json))
     }
     
+    func test_decodeNestedObjectWithCustomDecodingForInt() {
+        struct Item: Decodable, Equatable {
+            struct NestedItem: Decodable, Equatable {
+                let numberText: Int
+            }
+            
+            let nested: NestedItem
+        }
+        
+        let json = """
+        {
+            "nested": {
+                "numberText": "10"
+            }
+        }
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(nested: .init(numberText: 10)))
+    }
+    
+    func test_decodeObjectWithCustomDecodingForIntInList() throws {
+        struct Item: Decodable, Equatable {
+            let numberText: Int
+        }
+        
+        let json = """
+        [
+            {
+                "numberText": "10"
+            },
+            {
+                "numberText": "11"
+            }
+        ]
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode([Item].self, from: json), [Item(numberText: 10), Item(numberText: 11)])
+    }
+    
     func test_decodeTopLevelCustomDecodingForInt() throws {
         let json = """
             "10"

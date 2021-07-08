@@ -80,7 +80,11 @@ struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     }
     
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
-        try T(from: superDecoder(forKey: key))
+        if let customDecoding = valueDecodings.get(for: type) {
+            return try customDecoding(wrappedContainer.superDecoder(forKey: key))
+        } else {
+            return try T(from: superDecoder(forKey: key))
+        }
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {

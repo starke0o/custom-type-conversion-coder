@@ -74,7 +74,11 @@ struct _UnkeyedDecodingContainer: UnkeyedDecodingContainer {
     }
     
     mutating func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
-        try T(from: superDecoder())
+        if let customDecoding = valueDecodings.get(for: type) {
+            return try customDecoding(wrappedContainer.superDecoder())
+        } else {
+            return try T(from: superDecoder())
+        }
     }
     
     mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {

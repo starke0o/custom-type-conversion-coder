@@ -44,7 +44,7 @@ public final class CustomTypeConversionDecoder {
 
 // MARK: _CustomTypeConversionDecoder
 
-private struct _CustomTypeConversionDecoder: Decoder {
+struct _CustomTypeConversionDecoder: Decoder {
     let wrappedDecoder: Decoder
     let valueDecodings: CustomTypeConversionDecoder.ValueDecodings
     

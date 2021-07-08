@@ -80,7 +80,7 @@ struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     }
     
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
-        try customDecode(type, forKey: key)
+        try T(from: superDecoder(forKey: key))
     }
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
@@ -89,15 +89,18 @@ struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     }
     
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-        try wrappedContainer.nestedUnkeyedContainer(forKey: key)
+        try _UnkeyedDecodingContainer(wrappedContainer: wrappedContainer.nestedUnkeyedContainer(forKey: key),
+                                      valueDecodings: valueDecodings)
     }
     
     func superDecoder() throws -> Decoder {
-        try wrappedContainer.superDecoder()
+        try _CustomTypeConversionDecoder(wrappedDecoder: wrappedContainer.superDecoder(),
+                                         valueDecodings: valueDecodings)
     }
     
     func superDecoder(forKey key: Key) throws -> Decoder {
-        try wrappedContainer.superDecoder(forKey: key)
+        try _CustomTypeConversionDecoder(wrappedDecoder: wrappedContainer.superDecoder(forKey: key),
+                                         valueDecodings: valueDecodings)
     }
     
     func customDecode<Model: Decodable>(_ type: Model.Type, forKey key: Key) throws -> Model {

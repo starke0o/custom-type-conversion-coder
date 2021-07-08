@@ -19,23 +19,23 @@ class DecoderTests: XCTestCase {
     }()
     
     func test_decodeObjectWithCustomDecodingForInt() {
-        struct Item: Decodable {
-            let numberText: Int
+        struct Item: Decodable, Equatable {
+            let number: Int
         }
         
         let json = """
         {
-            "numberText": "10"
+            "number": "10"
         }
         """.data(using: .utf8)!
         
-        XCTAssertNoThrow(try decoder.decode(Item.self, from: json))
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: 10))
     }
     
-    func test_decodeNestedObjectWithCustomDecodingForInt() {
+    func test_decodeNestedObjectWithCustomDecodingForDate() throws {
         struct Item: Decodable, Equatable {
             struct NestedItem: Decodable, Equatable {
-                let numberText: Int
+                let date: Date
             }
             
             let nested: NestedItem
@@ -44,12 +44,39 @@ class DecoderTests: XCTestCase {
         let json = """
         {
             "nested": {
-                "numberText": "10"
+                "date": 231231
             }
         }
         """.data(using: .utf8)!
         
-        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(nested: .init(numberText: 10)))
+        decoder.valueDecodingStrategy(for: Date.self, customDecoding: { decoder in
+            let container = try decoder.singleValueContainer()
+            let int = try container.decode(Int.self)
+            
+            return Date(timeIntervalSinceReferenceDate: Double(int))
+        })
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(nested: .init(date: Date(timeIntervalSinceReferenceDate: 231231))))
+    }
+    
+    func test_decodeNestedObjectWithCustomDecodingForInt() {
+        struct Item: Decodable, Equatable {
+            struct NestedItem: Decodable, Equatable {
+                let number: Int
+            }
+            
+            let nested: NestedItem
+        }
+        
+        let json = """
+        {
+            "nested": {
+                "number": "10"
+            }
+        }
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(nested: .init(number: 10)))
     }
     
     func test_decodeObjectWithCustomDecodingForIntInList() throws {

@@ -2,7 +2,6 @@
 import Foundation
 
 struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
-    typealias Key = Key
     
     let wrappedContainer: KeyedDecodingContainer<Key>
     let valueDecodings: CustomTypeConversionDecoder.ValueDecodings

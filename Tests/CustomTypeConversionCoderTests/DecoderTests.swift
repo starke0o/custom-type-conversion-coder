@@ -30,6 +30,7 @@ class DecoderTests: XCTestCase {
         """.data(using: .utf8)!
         
         XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: 10))
+        XCTAssertEqual(11, 12)
     }
     
     func test_decodeNestedObjectWithCustomDecodingForDate() throws {

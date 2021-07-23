@@ -1,4 +1,5 @@
 [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
+![Build & Tests](https://github.com/starke0o/custom-type-conversion-coder/actions/workflows/tests.yml/badge.svg)
 
 # Why?
 

@@ -1,6 +1,8 @@
 
 import Foundation
 
+/// The `CustomTypeConversionDecoder` is not a classic decoder like the `JSONDecoder`.
+/// It is just a wrapper for other decoders to provide functionality that overrides the default value decodings.
 public final class CustomTypeConversionDecoder {
     
     class ValueDecodings {
@@ -28,15 +30,25 @@ public final class CustomTypeConversionDecoder {
     var wrappedDecoder: WrappableDecoder
     let valueDecodings = ValueDecodings()
 
+    /// Initializes `self` with a wrappable decoder.
+    /// - parameter decoder: The decoder to wrap
     public init(decoder: WrappableDecoder) {
         self.wrappedDecoder = decoder
     }
     
+    /// Decodes a top-level value of the given type using the provided decoder.
+    /// - parameter type: The type of the value to decode.
+    /// - parameter data: The data to decode from.
+    /// - returns: A value of the requested type.
+    /// - throws: An error if any value throws an error during decoding.
     public func decode<Model>(_ type: Model.Type, from data: Data) throws -> Model where Model : Decodable {
         wrappedDecoder.userInfo[ValueDecodings.key] = valueDecodings
         return try wrappedDecoder.decode(DecodingInterceptor<Model>.self, from: data).model
     }
     
+    /// Sets the strategy to use in decoding models of a given type.
+    /// - parameter type: The type for which the custom decoding is to be used
+    /// - parameter customDecoding: Decode the `Model` as a custom value decoded by the given closure.
     public func valueDecodingStrategy<Model>(for type: Model.Type, customDecoding: ((Decoder) throws -> Model)?) {
         valueDecodings.set(for: type, customDecoding: customDecoding)
     }

@@ -7,3 +7,5 @@ public protocol WrappableDecoder {
 }
 
 extension JSONDecoder: WrappableDecoder {}
+
+extension PropertyListDecoder: WrappableDecoder {}

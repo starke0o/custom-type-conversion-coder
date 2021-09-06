@@ -167,6 +167,11 @@ struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     }
     
     func customDecodeIfPresent<Model: Decodable>(_ type: Model.Type, forKey key: Key) throws -> Model? {
+        
+        guard !(try decodeNil(forKey: key)) else {
+            return nil
+        }
+        
         if let customDecoding = valueDecodings.get(for: Model?.self) {
             return try customDecoding(superDecoder(forKey: key))
         } else {

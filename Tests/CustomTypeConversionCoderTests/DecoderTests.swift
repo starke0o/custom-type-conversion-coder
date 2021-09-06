@@ -166,4 +166,18 @@ class DecoderTests: XCTestCase {
         
         XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: nil))
     }
+    
+    func test_decodeObjectWithNull() {
+        struct Item: Decodable, Equatable {
+            let number: Int?
+        }
+        
+        let json = """
+        {
+            "number": null
+        }
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: nil))
+    }
 }

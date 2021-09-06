@@ -159,6 +159,11 @@ struct _UnkeyedDecodingContainer: UnkeyedDecodingContainer {
     }
     
     mutating func customDecodeIfPresent<Model: Decodable>(_ type: Model.Type) throws -> Model? {
+        
+        guard !(try decodeNil()) else {
+            return nil
+        }
+        
         if let customDecoding = valueDecodings.get(for: Model?.self) {
             return try customDecoding(superDecoder())
         } else {

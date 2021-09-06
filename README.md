@@ -77,11 +77,29 @@ decoder.valueDecodingStrategy(for: String.self, customDecoding: { decoder in
 ## Bool from 0 or 1
 
 ```swift
-decoder.valueDecodingStrategy(for: String.self, customDecoding: { decoder in
+decoder.valueDecodingStrategy(for: Bool.self, customDecoding: { decoder in
     let container = try decoder.singleValueContainer()
-    let intValue = return int != 0
+    let int = try container.decode(Int.self)
 
     return int != 0
+})
+```
+
+## Bool of 0 or 1 and nil if none of them
+
+```swift
+decoder.valueDecodingStrategy(for: Bool?.self, customDecoding: { decoder in
+    let container = try decoder.singleValueContainer()
+    let int = try container.decode(Int.self)
+
+    switch int {
+    case 1:
+        return true
+    case 0:
+        return false
+    default:
+        return nil
+    }
 })
 ```
 

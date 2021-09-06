@@ -47,7 +47,9 @@ public final class CustomTypeConversionDecoder {
     }
     
     /// Sets the strategy to use in decoding models of a given type.
-    /// - parameter type: The type for which the custom decoding is to be used
+    ///
+    /// Also supports optional types.
+    /// - parameter type: The type for which the custom decoding is to be used.
     /// - parameter customDecoding: Decode the `Model` as a custom value decoded by the given closure.
     public func valueDecodingStrategy<Model>(for type: Model.Type, customDecoding: ((Decoder) throws -> Model)?) {
         valueDecodings.set(for: type, customDecoding: customDecoding)

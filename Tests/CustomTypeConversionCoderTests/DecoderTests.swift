@@ -113,4 +113,72 @@ class DecoderTests: XCTestCase {
         
         XCTAssertEqual(try decoder.decode([Int].self, from: json), [10, 11, 12])
     }
+    
+    func test_decodeObjectWithOptionalResult() {
+        struct Item: Decodable, Equatable {
+            let number: UInt?
+        }
+        
+        let decoder = CustomTypeConversionDecoder(decoder: JSONDecoder())
+        
+        decoder.valueDecodingStrategy(for: UInt?.self, customDecoding: { decoder in
+            let int = try Int(from: decoder)
+            
+            if int > 0 {
+                return UInt(int)
+            } else {
+                return nil
+            }
+        })
+        
+        let json = """
+        {
+            "number": -2
+        }
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: nil))
+    }
+    
+    func test_decodeObjectWithOptionalResultAndReuse() {
+        struct Item: Decodable, Equatable {
+            let number: UInt?
+        }
+        
+        let decoder = self.decoder
+        
+        decoder.valueDecodingStrategy(for: UInt?.self, customDecoding: { decoder in
+            let container = try decoder.singleValueContainer()
+            let int = try container.decode(Int.self)
+            
+            if int > 0 {
+                return UInt(int)
+            } else {
+                return nil
+            }
+        })
+        
+        let json = """
+        {
+            "number": "-2"
+        }
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: nil))
+    }
+    
+    func test_decodeObjectWithNull() {
+        struct Item: Decodable, Equatable {
+            let number: Int?
+            let number2: Int?
+        }
+        
+        let json = """
+        {
+            "number": null
+        }
+        """.data(using: .utf8)!
+        
+        XCTAssertEqual(try decoder.decode(Item.self, from: json), Item(number: nil, number2: nil))
+    }
 }

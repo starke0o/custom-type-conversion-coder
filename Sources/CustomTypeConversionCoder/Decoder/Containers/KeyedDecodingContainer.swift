@@ -168,7 +168,9 @@ struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     
     func customDecodeIfPresent<Model: Decodable>(_ type: Model.Type, forKey key: Key) throws -> Model? {
         
-        guard !(try decodeNil(forKey: key)) else {
+        let isNilOrNotPresent = (try? decodeNil(forKey: key)) ?? true
+        
+        guard !isNilOrNotPresent else {
             return nil
         }
         

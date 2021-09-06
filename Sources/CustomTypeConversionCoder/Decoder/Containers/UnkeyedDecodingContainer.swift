@@ -160,7 +160,9 @@ struct _UnkeyedDecodingContainer: UnkeyedDecodingContainer {
     
     mutating func customDecodeIfPresent<Model: Decodable>(_ type: Model.Type) throws -> Model? {
         
-        guard !(try decodeNil()) else {
+        let isNilOrNotPresent = (try? decodeNil()) ?? true
+        
+        guard !isNilOrNotPresent else {
             return nil
         }
         

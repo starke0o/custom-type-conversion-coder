@@ -185,7 +185,7 @@ struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
         if let customDecoding = valueDecodings.get(for: type) {
             return try customDecoding(superDecoder(forKey: key))
         } else {
-            return try wrappedContainer.decode(type, forKey: key)
+            return try Model(from: superDecoder(forKey: key))
         }
     }
 }

@@ -63,7 +63,9 @@ struct _CustomTypeConversionDecoder: Decoder {
     let valueDecodings: CustomTypeConversionDecoder.ValueDecodings
     
     var codingPath = [CodingKey]()
-    var userInfo = [CodingUserInfoKey : Any]()
+    var userInfo: [CodingUserInfoKey : Any] {
+        wrappedDecoder.userInfo
+    }
     
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         try KeyedDecodingContainer(_KeyedDecodingContainer(wrappedContainer: wrappedDecoder.container(keyedBy: type),
